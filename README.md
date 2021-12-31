@@ -21,7 +21,7 @@ conf = {
     "GAME_TITLE_PRETTY": "Age of Empires IV", 
     "PROV_SMS_EXT": "vtext.com", 
     "PHONE_NUM": "1234567899",
-    "EMAIL": "exampleEmail@gmail.com",
+    "EMAIL": "exampleEmail@gmail.com", # sorry, for now this has to be a 'gmail' account
     "EMAIL_PASS": "mY_$ecREt_pA$swoRd",
     "NOTIFY_PRICE": 50.00,
     "QUERY_INTERVAL_SEC": 6 * 3600
