@@ -5,6 +5,7 @@ import requests
 import smtplib as mail
 from html.parser import HTMLParser as parse
 import json
+from infi.systray import SysTrayIcon
 
 # Default data. should be filled in with the config file read in from commandline args.
 STEAM_URL = ""
@@ -131,6 +132,13 @@ def update_sources(purchaseActions: list):
             time.sleep(5)
     except Exception as e:
         log(f"There was an error parsing the sources: {e}")
+
+# Return the current prices as a string.
+def current_price(purchaseActions: list):
+    value = ""
+    for action in purchaseActions:
+        value += f"{action.description}\n  {action.price}\n\n"
+    return value
     
 # Return if the current time is within quiet time hours. Quiet time prevents text messages from sending during a time interval.
 # TODO: this if condition is fragile. the QUIET_TIME_START must be greater than QUIET_TIME_END to work correctly. this needs improved.
@@ -186,9 +194,20 @@ def loadArgs():
         log(f"Argument error. Expected 1 argument, a config json string.\n{e}")
         exit()
 
+# Send a request to the webpage, scrape the data, & update the local prices.
+def update():
+    global tray
+    res = requests.get(STEAM_URL)
+    p = Parser()
+    p.feed(res.text)
+    update_sources(p.actions)
+    text = current_price(p.actions)
+    tray.update(hover_text=text)
 
-
-
+def close_app():
+    global MAIN_RUNNING
+    MAIN_RUNNING = False
+    exit()
 
 
 
@@ -197,6 +216,8 @@ def loadArgs():
 #########################################################
 #                     Main Entry
 #########################################################
+
+MAIN_RUNNING = True
 
 # Get commandline args.
 loadArgs()
@@ -209,16 +230,22 @@ NOTIFIER.login(EMAIL, EMAIL_PASS)
 # Log the beginning of the session.
 log(f"\n[LOG START {STEAM_URL}]", False)
 
+# Initialize the next web scrape.
+nextCheck = dt.datetime.now()
+
+# Start the tray app.
+tray = SysTrayIcon("game_watcher.ico", "Watcher", menu_options=(("Refresh", None, update),), on_quit=close_app)
+tray.start()
+
 # Continuously scrape the URL at the given interval.
-while True:
+while MAIN_RUNNING:
     try:
-        res = requests.get(STEAM_URL)
-        p = Parser()
-        p.feed(res.text)
-        update_sources(p.actions)
-        
+        if nextCheck < dt.datetime.now():
+            nextCheck = nextCheck + dt.timedelta(seconds=QUERY_INTERVAL_SEC)
+            update()        
     except Exception as e:
         log(f"Error: {e}")
 
-    time.sleep(QUERY_INTERVAL_SEC)
+    # Sleep to slow down the loop.
+    time.sleep(5)
 
