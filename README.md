@@ -1,6 +1,10 @@
 # game_status
 Monitor Steam and get notified when the price reaches a set threshold
 
+## Required Dependencies...
+- install python
+- Pythonw    `pip3 install pythonw`
+- Systray    `pip3 install infi.systray`
 
 ## Getting Started...
 A json object full of config variables is required as a commandline argument to properly execute the script.
