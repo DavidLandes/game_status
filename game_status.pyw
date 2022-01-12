@@ -3,8 +3,9 @@ import time
 import sys
 import requests
 import smtplib as mail
-from html.parser import HTMLParser as parse
+import subprocess as sub
 import json
+from html.parser import HTMLParser as parse
 from infi.systray import SysTrayIcon
 
 # Default data. should be filled in with the config file read in from commandline args.
@@ -35,7 +36,6 @@ class PurchaseAction:
 
 # Parser handles reading in all the data from the steam webpage.
 # Create a Parse object and call Parser.feed("webpageHtmlString") to scrape out the price data.
-# TODO ALERT: bad design calls for a new Parser to be created to reset all the flags after each feed(). We need a way to reset all the flags & the actions when complete, without clearing the actions before a user can access them.
 class Parser(parse):
 
     def __init__(self):
