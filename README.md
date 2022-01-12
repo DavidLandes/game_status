@@ -42,7 +42,7 @@ sub.Popen([pythonwPath, scriptPath, json.dumps(conf) ])
 4. A `log.txt` file will be generated when the app begins. You can also look here for information. Any bugs can be reported on Github.
 
 ### Option 2
-- Remove the `loadArgs()` function and manually hard-code the config variables, defined at the top of the script.
+- Remove the `loadArgs()` function and manually hard-code the config variables, defined at the top of `game_status.pyw`.
     - Look at the config example in `Starter.py` for help.
 - Execute the script
 
