@@ -3,8 +3,8 @@ import time
 import sys
 import requests
 import smtplib as mail
-import subprocess as sub
 import json
+import webbrowser as web
 from html.parser import HTMLParser as parse
 from infi.systray import SysTrayIcon
 
@@ -204,6 +204,10 @@ def update():
     text = current_price(p.actions)
     tray.update(hover_text=text)
 
+def open_steam(arg):
+    if (len(STEAM_URL) > 0):
+        web.open(STEAM_URL, 2, True)
+
 def close_app():
     global MAIN_RUNNING
     MAIN_RUNNING = False
@@ -234,7 +238,7 @@ log(f"\n[LOG START {STEAM_URL}]", False)
 nextCheck = dt.datetime.now()
 
 # Start the tray app.
-tray = SysTrayIcon("game_watcher.ico", "Watcher", menu_options=(("Refresh", None, update),), on_quit=close_app)
+tray = SysTrayIcon("game_watcher.ico", "Watcher", menu_options=(("Refresh", None, update),("Open Steam", None, open_steam)), on_quit=close_app)
 tray.start()
 
 # Continuously scrape the URL at the given interval.
